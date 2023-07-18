@@ -1,14 +1,16 @@
+
 import React from 'react';
 import { Text, View, SafeAreaView, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useState, useEffect } from 'react';
 import Voice from '@react-native-community/voice';
 import axios from 'axios';
-
+import { launchCamera} from 'react-native-image-picker';
 
 const App = () => {
   const [result, setResult] = useState('');
   const [isLoading, setLoading] = useState(false);
   const [disease, setDisease] = useState('');
+  const[fileuri,setFileuri] =useState('');
   useEffect(() => {
     Voice.onSpeechStart = speechStartHandler;
     Voice.onSpeechEnd = speechEndHandler;
@@ -35,6 +37,7 @@ const App = () => {
     setLoading(true);
     try {
       await Voice.start('en-Us');
+
     } catch (error) {
       console.log('error', error);
     }
@@ -51,8 +54,10 @@ const App = () => {
 
   const clear = () => {
     setResult('');
-  };
+    // OpenCamera();
 
+  };
+ 
 
   const requestOptions = {
     method: 'POST',
@@ -76,6 +81,32 @@ const App = () => {
     }
   }
 
+
+   
+    OpenCamera = () => {
+      let options = {
+        storageOptions: {
+          skipBackup: true,
+          path: 'images',
+        },
+      };
+      launchCamera(options, response => {
+        console.log('Response = ', response);
+        console.log('latest');
+     
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else {
+          console.log('response', JSON.stringify(response));
+          setFileuri(response.assets[0].uri);
+         
+          console.log('lets see inside file uri')
+        }
+      });
+      startRecording(); 
+    };
+  
+      
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -100,11 +131,11 @@ const App = () => {
               <Text style={{ color: 'white', fontWeight: 'bold' }}>Speak</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity style={styles.stop} onPress={stopRecording}>
-            <Text style={{ color: 'white', fontWeight: 'bold' }}>Stop</Text>
-          </TouchableOpacity>
           <TouchableOpacity style={styles.stop} onPress={clear}>
             <Text style={{ color: 'white', fontWeight: 'bold' }}>clear</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.stop} onPress={OpenCamera}>
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>Video</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.clear} onPress={DetectDisease}>
@@ -118,7 +149,7 @@ const App = () => {
 };
 export default App;
 
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -194,6 +225,9 @@ const styles = StyleSheet.create({
    
   }
 });
+
+
+
 
 
 
