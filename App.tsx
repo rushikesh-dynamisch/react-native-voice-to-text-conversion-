@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Text, View, SafeAreaView, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useState, useEffect } from 'react';
@@ -68,7 +67,7 @@ const App = () => {
   const DetectDisease = async () => {
     try {
       await fetch(
-        'https://23cc-103-49-166-213.ngrok-free.app/human_disease_detection', requestOptions)
+        'https://a3fc-103-49-166-213.ngrok-free.app/human_disease_detection', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
@@ -106,7 +105,8 @@ const App = () => {
       startRecording(); 
     };
   
-      
+   console.log('diseases are',disease.data);
+  
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -141,8 +141,12 @@ const App = () => {
         <TouchableOpacity style={styles.clear} onPress={DetectDisease}>
           <Text style={{ color: 'white', fontWeight: 'bold' }}>Find Disease</Text>
         </TouchableOpacity>
-        
-        {disease ? <Text style={styles.disease}>You may suffer from {disease.data.NaiveBayes}</Text> : <Text style={styles.disease}>You may suffer from...</Text>}
+        <View>
+        {disease ? <Text style={styles.disease}>NaiveBayes: {disease.data.NaiveBayes}</Text> : <Text style={styles.disease}>Disease...</Text>}
+        {disease ? <Text style={styles.disease}>DecisionTree: {disease.data.DecisionTree}</Text> : <Text style={styles.disease}></Text>}
+        {disease ? <Text style={styles.disease}>CNN: {disease.data.cnn}</Text> : <Text style={styles.disease}></Text>}
+        {disease ? <Text style={styles.disease}>RandoemForest:{disease.data.randomforest}</Text> : <Text style={styles.disease}></Text>}
+       </View>
       </SafeAreaView>
     </View>
   );
@@ -213,8 +217,8 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     color:'black',
-    fontSize:20,
-    margin:25    
+    fontSize:15,
+    margin:5  
   },
   diseaseType:{
     display:'flex',
@@ -225,6 +229,12 @@ const styles = StyleSheet.create({
    
   }
 });
+
+
+
+
+
+
 
 
 
